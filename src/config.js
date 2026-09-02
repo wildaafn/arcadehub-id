@@ -18,14 +18,15 @@ export const ANNOUNCEMENT = {
     { label: 'Lihat katalog badge', href: '/catalog' },
     { label: 'Weekly Challenge Player', href: 'https://dicoding.id/Arcade26-WCPlayer' },
   ],
-  signature: 'R',
+  signature: 'W',
 }
 
 // Konfigurasi guild fasilitator, ubah di sini kalau ganti kode/link.
 export const CONFIG = {
-  referralCode: 'GCAF26-ID-D4J-QEH',
-  registerUrl: 'https://bit.ly/PesertaGoogleArcade26',
-  whatsappUrl: 'https://chat.whatsapp.com/F2nCFAiffFgCjHAVvOXr0d',
+  facilitatorName: 'WILDA ARIFFATUL FAISALNUR',
+  referralCode: 'GCAF26-ID-FCV-U99',
+  registerUrl: 'https://bit.ly/GoogleSkills26',
+  whatsappUrl: 'https://chat.whatsapp.com/Cbbe9EzpMfSBDwBcwe0a70?mode=gi_t',
   regOpen: '13 Juli 2026, 09.00 WIB',
   regClose: '14 September 2026, 23.59 WIB',
   arcadeUrl: 'https://go.cloudskillsboost.google/arcade',

@@ -96,6 +96,7 @@ export default function Footer() {
         <div className="fcol brandcol">
           <span className="brand-title">ARCADE HUB</span>
           <p>Tracker &amp; kalkulator poin Google Cloud Arcade untuk komunitas fasilitator. Poin dihitung otomatis dari profil publik Cloud Skills Boost.</p>
+          <p>Fasilitator: <b>{CONFIG.facilitatorName}</b></p>
           <p className="disc">Tools komunitas, tidak resmi dari Google. Poin best-effort, verifikasi via profil resmi.</p>
         </div>
 
@@ -122,7 +123,10 @@ export default function Footer() {
       </div>
 
       <div className="foot-bottom">
-        <div className="fcode"><span>Kode referral</span><b>{CONFIG.referralCode}</b></div>
+        <div className="fcode">
+          <span>Fasilitator</span>
+          <b>{CONFIG.facilitatorName}</b>
+        </div>
         <div className="fcopy">
           © 2026 Arcade Hub · Dibuat untuk komunitas Google Cloud Arcade Fasilitator 2026
           {/* Tanggal build, disuntik vite.config.js. <time dateTime> dipakai supaya mesin

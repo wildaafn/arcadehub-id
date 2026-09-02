@@ -79,9 +79,15 @@ export default function Info() {
 
       <div className="infocard hero">
         <div className="ic-t">Daftar Program</div>
-        <p className="ic-p">Belum daftar? Gunakan kode referral guild ini saat mengisi formulir pendaftaran.</p>
-        <div className="ic-lab">Kode Referral</div>
-        <CopyCode />
+        <p className="ic-p">Belum daftar? Daftar melalui tautan fasilitator di bawah ini.</p>
+        <div className="ic-lab">Fasilitator</div>
+        <p className="ic-p"><b>{CONFIG.facilitatorName}</b></p>
+        {CONFIG.referralCode && (
+          <>
+            <div className="ic-lab">Kode Referral</div>
+            <CopyCode />
+          </>
+        )}
         <a className="bigcta" href={CONFIG.registerUrl} target="_blank" rel="noreferrer">Daftar Sekarang ↗</a>
         <div className="ic-dates">
           <div><span>Buka</span><b>{CONFIG.regOpen}</b></div>

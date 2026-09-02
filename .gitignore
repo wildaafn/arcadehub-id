@@ -8,6 +8,9 @@ dist-ssr
 # vercel
 .vercel
 
+# edgeone
+.edgeone
+
 # env & secrets (JANGAN commit)
 .env
 .env.*
