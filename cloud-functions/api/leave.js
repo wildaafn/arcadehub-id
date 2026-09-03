@@ -1,6 +1,7 @@
 import { getSupabase } from '../../lib/db.js'
 import { rateLimit, clientIp } from '../../lib/ratelimit.js'
 import { json } from '../lib/response.js'
+import { sanitizeText } from '../lib/security.js'
 
 export default async function onRequest(context) {
   const { request } = context
@@ -13,13 +14,15 @@ export default async function onRequest(context) {
 
     const body = await request.json()
     const { id, token } = body || {}
-    if (!id || !token) return json({ error: 'id dan token wajib.' }, 400)
+    const cleanId = sanitizeText(id, 64)
+    const cleanToken = sanitizeText(token, 64)
+    if (!cleanId || !cleanToken) return json({ error: 'id dan token wajib.' }, 400)
 
     const supabase = getSupabase()
     const { data, error } = await supabase
       .from('arcade_members')
       .delete()
-      .match({ id, remove_token: token })
+      .match({ id: cleanId, remove_token: cleanToken })
       .select('id')
 
     if (error) throw new Error(error.message)

@@ -1,6 +1,7 @@
 import { getSupabase } from '../../lib/db.js'
 import { rateLimit, clientIp } from '../../lib/ratelimit.js'
 import { json } from '../lib/response.js'
+import { safeCompare, sanitizeText } from '../lib/security.js'
 
 const ADMIN = process.env.ADMIN_KEY || ''
 
@@ -34,7 +35,7 @@ export default async function onRequest(context) {
     if (request.method === 'GET') {
       const url = new URL(request.url)
       const key = url.searchParams.get('adminKey')
-      if (!ADMIN || key !== ADMIN) return json({ error: 'Butuh kunci admin.' }, 403)
+      if (!ADMIN || !safeCompare(key, ADMIN)) return json({ error: 'Butuh kunci admin.' }, 403)
       const { data: rows, error } = await supabase
         .from('arcade_feedback')
         .select('id, message, name, page, created_at')
@@ -51,21 +52,21 @@ export default async function onRequest(context) {
 
     const body = await request.json()
     const { message, name, page } = body || {}
-    const msg = (message && String(message).trim()) || ''
+    const msg = sanitizeText(message, 1000)
     if (msg.length < 3) return json({ error: 'Tulis masukan minimal 3 karakter.' }, 400)
 
-    const cleanName = (name ? String(name).trim() : '').slice(0, 60) || null
-    const cleanPage = page ? String(page).slice(0, 40) : null
+    const cleanName = sanitizeText(name, 60) || null
+    const cleanPage = sanitizeText(page, 40) || null
 
     const { error } = await supabase.from('arcade_feedback').insert({
       id: crypto.randomUUID(),
-      message: msg.slice(0, 1000),
+      message: msg,
       name: cleanName,
       page: cleanPage,
     })
     if (error) throw new Error(error.message)
 
-    await notifyEmail({ message: msg.slice(0, 1000), name: cleanName, page: cleanPage })
+    await notifyEmail({ message: msg, name: cleanName, page: cleanPage })
 
     return json({ ok: true })
   } catch (e) {

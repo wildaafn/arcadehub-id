@@ -2,6 +2,7 @@ import { getSupabase } from '../../lib/db.js'
 import { fetchAndScore } from '../../lib/fetchProfile.js'
 import { rateLimit, clientIp } from '../../lib/ratelimit.js'
 import { json } from '../lib/response.js'
+import { sanitizeText } from '../lib/security.js'
 
 export default async function onRequest(context) {
   const { request } = context
@@ -15,12 +16,13 @@ export default async function onRequest(context) {
     const supabase = getSupabase()
     const body = await request.json()
     const { id } = body || {}
-    if (!id) return json({ error: 'id wajib' }, 400)
+    const cleanId = sanitizeText(id, 64)
+    if (!cleanId) return json({ error: 'id wajib' }, 400)
 
     const { data: rows, error: selErr } = await supabase
       .from('arcade_members')
       .select('profile_url')
-      .eq('id', id)
+      .eq('id', cleanId)
       .limit(1)
 
     if (selErr) throw new Error(selErr.message)
@@ -43,7 +45,7 @@ export default async function onRequest(context) {
         avatar: s.avatar,
         last_synced: new Date().toISOString(),
       })
-      .eq('id', id)
+      .eq('id', cleanId)
 
     if (updErr) throw new Error(updErr.message)
 

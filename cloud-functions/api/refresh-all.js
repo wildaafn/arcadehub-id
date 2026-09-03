@@ -1,6 +1,7 @@
 import { getSupabase } from '../../lib/db.js'
 import { fetchAndScore } from '../../lib/fetchProfile.js'
 import { json } from '../lib/response.js'
+import { safeCompare } from '../lib/security.js'
 
 const BATCH = 60
 const CONCURRENCY = 4
@@ -8,10 +9,17 @@ const TIME_BUDGET_MS = 50000
 
 function authorized(request) {
   const secret = process.env.CRON_SECRET
-  if (secret && request.headers.get('authorization') === `Bearer ${secret}`) return true
+  const authHeader = request.headers.get('authorization')
+  if (secret && authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.slice(7).trim()
+    if (safeCompare(token, secret)) return true
+  }
+
   const admin = process.env.ADMIN_KEY
   const url = new URL(request.url)
-  if (admin && url.searchParams.get('adminKey') === admin) return true
+  const adminKey = url.searchParams.get('adminKey')
+  if (admin && adminKey && safeCompare(adminKey, admin)) return true
+
   return false
 }
 

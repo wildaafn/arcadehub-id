@@ -1,8 +1,10 @@
 import { getSupabase } from '../../lib/db.js'
 import { json } from '../lib/response.js'
+import { safeCompare } from '../lib/security.js'
 
 const ADMIN = process.env.ADMIN_KEY || ''
 
+// Admin-only: delete a bogus/duplicate entry (any guild). Requires ADMIN_KEY.
 export default async function onRequest(context) {
   const { request } = context
   if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
@@ -10,11 +12,11 @@ export default async function onRequest(context) {
   try {
     const body = await request.json()
     const { id, adminKey } = body || {}
-    if (!ADMIN || adminKey !== ADMIN) return json({ error: 'Butuh kunci admin.' }, 403)
-    if (!id) return json({ error: 'id wajib' }, 400)
+    if (!ADMIN || !safeCompare(adminKey, ADMIN)) return json({ error: 'Butuh kunci admin.' }, 403)
+    if (!id || typeof id !== 'string') return json({ error: 'id wajib' }, 400)
 
     const supabase = getSupabase()
-    const { error } = await supabase.from('arcade_members').delete().eq('id', id)
+    const { error } = await supabase.from('arcade_members').delete().eq('id', id.trim())
     if (error) throw new Error(error.message)
 
     return json({ ok: true })

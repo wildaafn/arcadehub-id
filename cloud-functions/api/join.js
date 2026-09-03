@@ -2,6 +2,7 @@ import { getSupabase } from '../../lib/db.js'
 import { fetchAndScore, normalizeProfileUrl } from '../../lib/fetchProfile.js'
 import { rateLimit, clientIp } from '../../lib/ratelimit.js'
 import { json } from '../lib/response.js'
+import { sanitizeText } from '../lib/security.js'
 
 const DEFAULT_GUILD = 'UMUM'
 
@@ -16,7 +17,7 @@ export default async function onRequest(context) {
 
     const body = await request.json()
     const { name, profileUrl, code } = body || {}
-    const raw = code && String(code).trim().slice(0, 24)
+    const raw = code && sanitizeText(code, 24)
     // guild null = tidak diberikan; saat re-sync jangan timpa guild yang sudah ada.
     const guild = raw ? raw.toUpperCase() : null
 
@@ -26,7 +27,7 @@ export default async function onRequest(context) {
     }
 
     const s = await fetchAndScore(url)
-    const displayName = ((name && String(name).trim()) || s.name || 'Peserta').slice(0, 60)
+    const displayName = sanitizeText(name, 60) || sanitizeText(s.name, 60) || 'Peserta'
 
     const supabase = getSupabase()
     const id = crypto.randomUUID()
