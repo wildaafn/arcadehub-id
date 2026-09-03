@@ -228,15 +228,30 @@ Pantau live detail badge & target milestone kamu langsung di tracker:
 
   return (
     <div className="fasil-page">
-      {/* Header Halaman (di print layout menjadi Header Laporan) */}
-      <div className="fasil-header">
-        <span className="fasil-badge no-print">Fitur Khusus Fasilitator</span>
+      {/* Header Halaman (Screen) */}
+      <div className="fasil-header no-print">
+        <span className="fasil-badge">Fitur Khusus Fasilitator</span>
         <h1 className="fasil-title">Rekap Laporan CSV Fasilitator</h1>
         <p className="fasil-sub">
           Olah spreadsheet laporan harian Google Cloud Arcade secara instan untuk rekap progres peserta, analisis milestone guild, dan leaderboard.
         </p>
-        <div className="print-only-meta">
-          <span>Kode Guild: <b>GCAF26-ID-FCV-U99</b></span> · <span>Fasilitator: <b>WILDA ARIFFATUL FAISALNUR</b></span> · <span>Tanggal: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+      </div>
+
+      {/* Header Khusus Print / PDF (Executive Report Branding) */}
+      <div className="print-report-header">
+        <div className="prh-top">
+          <div className="prh-brand">
+            <span className="prh-logo">ARCADE HUB</span>
+            <span className="prh-sub">Laporan Progres Harian Peserta Google Cloud Arcade</span>
+          </div>
+          <div className="prh-date">
+            {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}
+          </div>
+        </div>
+        <div className="prh-meta-chips">
+          <div className="prh-chip">Fasilitator: <b>WILDA ARIFFATUL FAISALNUR</b></div>
+          <div className="prh-chip">Kode Guild: <b>GCAF26-ID-FCV-U99</b></div>
+          <div className="prh-chip">Program: <b>Arcade Fasilitator 2026</b></div>
         </div>
       </div>
 

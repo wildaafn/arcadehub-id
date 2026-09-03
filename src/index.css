@@ -1420,39 +1420,101 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .mc-hint{font-size:11.5px;color:var(--muted);margin:0;line-height:1.4}
 .mc-textarea{width:100%;padding:10px 12px;border-radius:8px;background:rgba(0,0,0,.4);border:1px solid var(--line);color:#fff;font-size:12px;font-family:sans-serif;line-height:1.45;resize:none}
 
-.print-only-meta{display:none}
+.print-report-header{display:none}
 
-/* Print / PDF Styles */
+/* =============================================================================
+   PRINT / PDF EXPORT STYLES (PREMIUM ARCADE THEME)
+   ============================================================================= */
 @media print{
-  body{background:#fff!important;color:#000!important}
-  .topbar,.no-print,.spacefx,.site-footer,.feedback-bubble{display:none!important}
-  .page{min-height:auto}
-  .main{padding:0!important}
-  .fasil-page{gap:12px}
-  .fasil-header{text-align:left;padding:0 0 10px 0;border-bottom:2px solid #333}
-  .fasil-title{color:#000!important;font-size:22px}
-  .fasil-sub{color:#555!important;font-size:12px;margin:0}
-  .print-only-meta{display:flex;gap:16px;font-size:12px;color:#333;margin-top:6px}
-  .kpi-grid{grid-template-columns:repeat(5,1fr)!important;gap:8px}
-  .kpi-card{background:#f8f9fa!important;border:1px solid #ddd!important;padding:8px 10px}
-  .kpi-label{color:#666!important;font-size:10px}
-  .kpi-val{color:#000!important;font-size:18px}
-  .kpi-sub{color:#777!important;font-size:9px}
-  .ms-breakdown-card{background:#f8f9fa!important;border:1px solid #ddd!important;padding:8px 10px}
-  .mb-title{color:#333!important;font-size:11px;margin-bottom:6px}
-  .mb-grid{grid-template-columns:repeat(5,1fr)!important}
-  .mb-item{background:#fff!important;border:1px solid #ccc!important;padding:4px}
-  .mb-badge{color:#333!important;font-size:10px}
-  .mb-num{color:#000!important;font-size:15px}
-  .fasil-table-wrap{background:#fff!important;border:1px solid #ccc!important}
-  .ft-header-info{color:#333!important;background:#eee!important;font-size:11px}
-  .fasil-table th{background:#eee!important;color:#000!important;border-bottom:1px solid #ccc!important;font-size:11px;padding:8px}
-  .fasil-table td{color:#000!important;border-bottom:1px solid #eee!important;font-size:11px;padding:8px}
-  .ft-rank-badge{background:#eee!important;color:#000!important;border:1px solid #ccc!important}
-  .ft-points{color:#000!important;font-weight:bold}
-  .fasil-ms-tag{background:#f0f0f0!important;color:#000!important;border:1px solid #ccc!important}
-  .status-badge.ok{background:#e6f4ea!important;color:#137333!important;border:1px solid #ceead6!important}
-  .status-badge.warn{background:#fce8e6!important;color:#c5221f!important;border:1px solid #fad2cf!important}
+  @page{margin:10mm 10mm;size:A4 portrait}
+  
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  
+  html,body{background:#13172e!important;color:#ffffff!important;font-family:'Segoe UI',system-ui,sans-serif!important}
+  
+  /* Sembunyikan elemen navigasi, floating, dan interaktif */
+  .topbar,.no-print,.spacefx,.site-footer,.feedback-bubble,.fb-btn,.modal-overlay,.fasil-toolbar,.fasil-filter-card,.fasil-upload-card,.demo-hint{
+    display:none!important
+  }
+  
+  .page{min-height:auto!important}
+  .main{padding:0!important;display:block!important}
+  .app{max-width:100%!important;width:100%!important}
+  .fasil-page{gap:14px!important}
+  
+  /* Executive Report Header */
+  .print-report-header{
+    display:flex!important;flex-direction:column!important;gap:8px!important;
+    padding-bottom:12px!important;margin-bottom:12px!important;border-bottom:2px solid rgba(255,255,255,.2)!important
+  }
+  .prh-top{display:flex;justify-content:space-between;align-items:flex-end}
+  .prh-brand{display:flex;flex-direction:column;gap:2px}
+  .prh-logo{font-family:'PS2P',sans-serif;font-size:18px;color:#fcc934!important;letter-spacing:1px}
+  .prh-sub{font-size:13px;font-weight:700;color:#fff!important}
+  .prh-date{font-size:12px;color:rgba(255,255,255,.7)!important;font-weight:600}
+  
+  .prh-meta-chips{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+  .prh-chip{font-size:11.5px;padding:4px 10px;border-radius:6px;background:rgba(255,255,255,.08)!important;border:1px solid rgba(255,255,255,.15)!important;color:#fff!important}
+  .prh-chip b{color:#fcc934!important}
+  
+  /* KPI Cards */
+  .kpi-grid{display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:8px!important;margin-bottom:10px!important}
+  .kpi-card{background:rgba(255,255,255,.05)!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:10px!important;padding:8px 10px!important}
+  .kpi-label{font-size:10px!important;color:rgba(255,255,255,.7)!important}
+  .kpi-val{font-size:20px!important;font-weight:900!important;color:#fff!important;margin:2px 0!important}
+  .kpi-card.success .kpi-val{color:#34c95f!important}
+  .kpi-card.star .kpi-val{color:#fcc934!important}
+  .kpi-card.warning .kpi-val{color:#f59e0b!important}
+  .kpi-card.purple .kpi-val{color:#a06bff!important}
+  .kpi-sub{font-size:9.5px!important;color:rgba(255,255,255,.6)!important}
+  
+  /* Milestone Breakdown */
+  .ms-breakdown-card{background:rgba(255,255,255,.04)!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:10px!important;padding:10px 12px!important;margin-bottom:10px!important}
+  .mb-title{font-size:11px!important;font-weight:800!important;color:rgba(255,255,255,.8)!important;margin-bottom:6px!important}
+  .mb-grid{display:grid!important;grid-template-columns:repeat(5,1fr)!important;gap:6px!important}
+  .mb-item{padding:6px 4px!important;border-radius:8px!important}
+  .mb-item.ult{border:1px solid rgba(160,107,255,.5)!important;background:rgba(160,107,255,.12)!important}
+  .mb-item.m3{border:1px solid rgba(252,201,52,.5)!important;background:rgba(252,201,52,.12)!important}
+  .mb-item.m2{border:1px solid rgba(91,139,255,.5)!important;background:rgba(91,139,255,.12)!important}
+  .mb-item.m1{border:1px solid rgba(52,201,95,.5)!important;background:rgba(52,201,95,.12)!important}
+  .mb-item.none{border:1px solid rgba(255,255,255,.12)!important;background:rgba(255,255,255,.04)!important}
+  .mb-badge{font-size:9.5px!important;font-weight:800!important}
+  .mb-item.ult .mb-badge{color:#c49eff!important}
+  .mb-item.m3 .mb-badge{color:#fcc934!important}
+  .mb-item.m2 .mb-badge{color:#82abff!important}
+  .mb-item.m1 .mb-badge{color:#58df7f!important}
+  .mb-item.none .mb-badge{color:rgba(255,255,255,.6)!important}
+  .mb-num{font-size:16px!important;font-weight:900!important;color:#fff!important}
+  
+  /* Table Print Optimization */
+  .fasil-table-wrap{background:rgba(255,255,255,.03)!important;border:1px solid rgba(255,255,255,.15)!important;border-radius:10px!important;overflow:visible!important}
+  .ft-header-info{padding:8px 12px!important;font-size:11px!important;color:rgba(255,255,255,.8)!important;background:rgba(0,0,0,.3)!important;border-bottom:1px solid rgba(255,255,255,.15)!important}
+  
+  .fasil-table{width:100%!important;border-collapse:collapse!important;font-size:11px!important}
+  .fasil-table thead{display:table-header-group!important}
+  .fasil-table tr{break-inside:avoid!important;page-break-inside:avoid!important}
+  .fasil-table th{background:#0d1124!important;color:rgba(255,255,255,.8)!important;padding:8px 10px!important;font-size:10px!important;border-bottom:1px solid rgba(255,255,255,.2)!important}
+  .fasil-table td{padding:8px 10px!important;border-bottom:1px solid rgba(255,255,255,.08)!important;color:#fff!important}
+  
+  .ft-rank-badge{padding:2px 6px!important;font-size:11px!important;border-radius:4px!important;background:rgba(255,255,255,.08)!important}
+  .ft-rank-badge.top-1{background:rgba(252,201,52,.25)!important;color:#fcc934!important;border:1px solid rgba(252,201,52,.6)!important;font-weight:900!important}
+  .ft-rank-badge.top-2{background:rgba(201,211,230,.25)!important;color:#e2e8f0!important;border:1px solid rgba(201,211,230,.6)!important;font-weight:900!important}
+  .ft-rank-badge.top-3{background:rgba(208,139,82,.25)!important;color:#fba76b!important;border:1px solid rgba(208,139,82,.6)!important;font-weight:900!important}
+  
+  .ft-points{font-size:13px!important;color:#fcc934!important;font-weight:900!important}
+  .ft-name{font-size:11.5px!important;font-weight:700!important}
+  .skill-5-badge{background:rgba(252,201,52,.15)!important;color:#fcc934!important;border:1px solid rgba(252,201,52,.4)!important;font-size:9px!important}
+  .ai-bonus-badge{background:rgba(252,201,52,.15)!important;color:#fcc934!important;border:1px solid rgba(252,201,52,.4)!important;font-size:9px!important}
+  
+  .fasil-ms-tag{padding:2px 6px!important;font-size:9.5px!important}
+  .fasil-ms-tag.ultimate{background:rgba(160,107,255,.25)!important;color:#d8bfff!important;border:1px solid rgba(160,107,255,.5)!important}
+  .fasil-ms-tag.m3{background:rgba(252,201,52,.25)!important;color:#fde047!important;border:1px solid rgba(252,201,52,.5)!important}
+  .fasil-ms-tag.m2{background:rgba(91,139,255,.25)!important;color:#93c5fd!important;border:1px solid rgba(91,139,255,.5)!important}
+  .fasil-ms-tag.m1{background:rgba(52,201,95,.25)!important;color:#86efac!important;border:1px solid rgba(52,201,95,.5)!important}
+  .fasil-ms-tag.none{background:rgba(255,255,255,.08)!important;color:rgba(255,255,255,.6)!important}
+  
+  .status-badge.ok{background:rgba(52,201,95,.2)!important;color:#86efac!important;border:1px solid rgba(52,201,95,.4)!important;font-size:9.5px!important}
+  .status-badge.warn{background:rgba(239,68,68,.2)!important;color:#fca5a5!important;border:1px solid rgba(239,68,68,.4)!important;font-size:9.5px!important}
 }
 
 /* Responsive adjustments */
