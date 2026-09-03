@@ -32,7 +32,7 @@ export default async function onRequest(context) {
     const id = crypto.randomUUID()
     const token = crypto.randomUUID()
 
-    const { data, error } = await supabase.rpc('upsert_member', {
+    const { data, error } = await supabase.rpc('arcade_upsert_member', {
       p_id: id,
       p_guild: guild,
       p_default_guild: DEFAULT_GUILD,

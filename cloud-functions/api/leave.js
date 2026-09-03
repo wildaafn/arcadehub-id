@@ -2,9 +2,6 @@ import { getSupabase } from '../../lib/db.js'
 import { rateLimit, clientIp } from '../../lib/ratelimit.js'
 import { json } from '../lib/response.js'
 
-// Self-service: peserta menghapus entri LEADERBOARD-nya sendiri. Otorisasi via remove_token
-// rahasia (dibuat saat join pertama, hanya dipegang pemilik). id & profile_url publik jadi
-// tidak cukup sebagai bukti; token wajib. Non-destruktif: bisa gabung lagi kapan saja.
 export default async function onRequest(context) {
   const { request } = context
   if (request.method !== 'POST') return json({ error: 'Method not allowed' }, 405)
@@ -20,7 +17,7 @@ export default async function onRequest(context) {
 
     const supabase = getSupabase()
     const { data, error } = await supabase
-      .from('members')
+      .from('arcade_members')
       .delete()
       .match({ id, remove_token: token })
       .select('id')

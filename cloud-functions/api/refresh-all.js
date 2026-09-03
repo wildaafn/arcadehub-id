@@ -2,10 +2,8 @@ import { getSupabase } from '../../lib/db.js'
 import { fetchAndScore } from '../../lib/fetchProfile.js'
 import { json } from '../lib/response.js'
 
-// Sinkron ulang semua peserta leaderboard. Dipanggil otomatis oleh cron (harian),
-// atau manual dengan ?adminKey=<ADMIN_KEY>.
-const BATCH = 60 // maksimal peserta per run (yang paling lama tak disinkron duluan)
-const CONCURRENCY = 4 // fetch paralel ke Cloud Skills Boost
+const BATCH = 60
+const CONCURRENCY = 4
 const TIME_BUDGET_MS = 50000
 
 function authorized(request) {
@@ -26,7 +24,7 @@ export default async function onRequest(context) {
     const supabase = getSupabase()
 
     const { data: rows, error: selErr } = await supabase
-      .from('members')
+      .from('arcade_members')
       .select('id, profile_url')
       .order('last_synced', { ascending: true })
       .limit(BATCH)
@@ -47,7 +45,7 @@ export default async function onRequest(context) {
         try {
           const s = await fetchAndScore(m.profile_url)
           const { error: updErr } = await supabase
-            .from('members')
+            .from('arcade_members')
             .update({
               games: s.games,
               skills: s.skills,
@@ -66,7 +64,7 @@ export default async function onRequest(context) {
           if (updErr) throw updErr
           ok++
         } catch {
-          failed++ // profil privat/tak terjangkau, biarkan data lama, lanjut
+          failed++
         }
       }
     }
@@ -74,14 +72,11 @@ export default async function onRequest(context) {
       Array.from({ length: Math.min(CONCURRENCY, (rows || []).length) }, worker)
     )
 
-    // Snapshot poin harian via RPC, dasar untuk leaderboard mingguan.
-    // try terpisah: menyinkron poin adalah tugas utama dan sudah berhasil di titik ini.
-    // Snapshot gagal tidak boleh membuat cron dilaporkan merah dan memicu retry sia-sia.
     let snapshot = 0
     let snapshotError = null
     try {
       const { data: snapCount, error: snapErr } = await supabase.rpc(
-        'snapshot_daily_points'
+        'arcade_snapshot_daily_points'
       )
       if (snapErr) throw snapErr
       snapshot = snapCount ?? 0

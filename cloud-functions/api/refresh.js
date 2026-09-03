@@ -18,7 +18,7 @@ export default async function onRequest(context) {
     if (!id) return json({ error: 'id wajib' }, 400)
 
     const { data: rows, error: selErr } = await supabase
-      .from('members')
+      .from('arcade_members')
       .select('profile_url')
       .eq('id', id)
       .limit(1)
@@ -29,7 +29,7 @@ export default async function onRequest(context) {
     const s = await fetchAndScore(rows[0].profile_url)
 
     const { error: updErr } = await supabase
-      .from('members')
+      .from('arcade_members')
       .update({
         games: s.games,
         skills: s.skills,

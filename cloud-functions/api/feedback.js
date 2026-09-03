@@ -4,7 +4,6 @@ import { json } from '../lib/response.js'
 
 const ADMIN = process.env.ADMIN_KEY || ''
 
-// Kirim notifikasi email via Resend (opsional, hanya jika env di-set). Fail-safe: tidak menggagalkan submit.
 async function notifyEmail({ message, name, page }) {
   const key = process.env.RESEND_API_KEY
   const to = process.env.FEEDBACK_EMAIL
@@ -32,13 +31,12 @@ export default async function onRequest(context) {
   try {
     const supabase = getSupabase()
 
-    // GET (admin): baca semua masukan
     if (request.method === 'GET') {
       const url = new URL(request.url)
       const key = url.searchParams.get('adminKey')
       if (!ADMIN || key !== ADMIN) return json({ error: 'Butuh kunci admin.' }, 403)
       const { data: rows, error } = await supabase
-        .from('feedback')
+        .from('arcade_feedback')
         .select('id, message, name, page, created_at')
         .order('created_at', { ascending: false })
         .limit(500)
@@ -59,7 +57,7 @@ export default async function onRequest(context) {
     const cleanName = (name ? String(name).trim() : '').slice(0, 60) || null
     const cleanPage = page ? String(page).slice(0, 40) : null
 
-    const { error } = await supabase.from('feedback').insert({
+    const { error } = await supabase.from('arcade_feedback').insert({
       id: crypto.randomUUID(),
       message: msg.slice(0, 1000),
       name: cleanName,
