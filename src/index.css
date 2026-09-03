@@ -1301,6 +1301,10 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-o
 .kpi-card.success .kpi-val{color:var(--green)}
 .kpi-card.warning .kpi-val{color:var(--gold)}
 .kpi-card.purple .kpi-val{color:var(--purple)}
+.kpi-card.star .kpi-val{color:#fcc934}
+.skill-5-badge{display:inline-block;padding:2px 6px;border-radius:4px;font-size:10px;font-weight:800;background:rgba(252,201,52,.15);color:var(--gold);border:1px solid rgba(252,201,52,.3)}
+.chip-btn.special{border-color:rgba(252,201,52,.4);color:var(--gold)}
+.chip-btn.special.active{background:var(--gold);color:#111;font-weight:800}
 
 /* Milestone Breakdown */
 .ms-breakdown-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px}

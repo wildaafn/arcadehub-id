@@ -1,17 +1,15 @@
 import { useState, useMemo, useRef } from 'react'
 import { parseFacilitatorReport } from '../../lib/parseCsv.js'
-import { MS } from '../points.js'
 import Tip from '../Tip.jsx'
 import Medal from '../Medal.jsx'
-import { IconGamepad, IconTrophy, IconTarget, IconAward, IconAlert, IconCrown } from '../icons.jsx'
 
-const DEMO_CSV = `Nama Peserta\tEmail Peserta\tNomor HP Peserta\tURL Profil Google Skills\tStatus Google Skills URL Profil\tMilestone yang diraih\tBonus Milestone yang diraih\tJumlah Lencana Keahlian yang diselesaikan\tJumlah Arcade Game yang diselesaikan
-Muhammad Mufadhol Afif\tmufadhol@example.com\t08123456789\thttps://www.skills.google/public_profiles/24480a54-82f8-48d5-8357-59a150aa8465\tAll Good\tMilestone 1\tNo\t9\t6
-Ahmad Rizki Pratama\tahmad.rizki@example.com\t08219876543\thttps://www.cloudskillsboost.google/public_profiles/11111111-2222-3333-4444-555555555555\tAll Good\tUltimate Milestone\tYes\t56\t12
-Siti Nurhaliza\tsiti.nur@example.com\t08571234567\thttps://www.skills.google/public_profiles/33333333-4444-5555-6666-777777777777\tAll Good\tMilestone 3\tYes\t44\t10
-Budi Santoso\tbudi.s@example.com\t08198765432\thttps://www.skills.google/public_profiles/44444444-5555-6666-7777-888888888888\tAll Good\tMilestone 2\tNo\t30\t8
-Dewi Anggraini\tdewi.a@example.com\t08381234567\thttps://www.cloudskillsboost.google/public_profiles/55555555-6666-7777-8888-999999999999\tAll Good\tMilestone 1\tNo\t16\t6
-Fajar Nugraha\tfajar.n@example.com\t08139876543\thttps://invalid-link-profil.com\tWrong Google Skills URL\tNone\tNo\t4\t2`
+const DEMO_CSV = `Nama Peserta\tEmail Peserta\tNomor HP Peserta\tURL Profil Google Skills\tStatus Google Skills URL Profil\tURL Profil Google Developer\tStatus URL Profil Google Developer\tStatus Redeem Kode Akses\tMilestone yang diraih\tBonus Milestone yang diraih\tStatus Verifikasi AI Agent\tLencana Digital GEAR yang diraih\tJumlah Lencana Keahlian yang diselesaikan\tNama Lencana Keahlian yang diselesaikan\tJumlah Arcade Game yang diselesaikan\tNama Arcade Game yang diselesaikan
+Dimas Adjie Wijaya\tadjiedimas170@gmail.com\t6285166854209\thttps://www.skills.google/public_profiles/f588d6d0-e3e7-431f-8a35-8e834a524e8b\tAll Good\thttps://developers.google.com/profile/u/100815074843485258698\tAll Good\tYes\tNone\tNo\tNot yet submitted\tGemini Enterprise Agent Ready\t3\tBadge1\t0\t
+Muhammad Mufadhol Afif\tmufadhol@gmail.com\t628123456789\thttps://www.skills.google/public_profiles/24480a54-82f8-48d5-8357-59a150aa8465\tAll Good\thttps://developers.google.com/profile/u/111054617812326045492\tAll Good\tYes\tMilestone 1\tNo\tSubmitted\tGemini Enterprise Agent Ready\t9\tBadge1\t6\tGame1
+Zainudin\tzainudin@gmail.com\t628987654321\thttps://www.cloudskillsboost.google/public_profiles/11111111-2222-3333-4444-555555555555\tAll Good\thttps://me.developers.google.com/u/101548904163688193984\tAll Good\tYes\tUltimate Milestone\tYes\tVerified\tGemini Enterprise Agent Ready\t93\tBadge1\t12\tGame1
+Rafi Sofyan Triyanto\trafi@gmail.com\t628123123123\thttps://www.skills.google/public_profiles/22222222-3333-4444-5555-666666666666\tAll Good\thttps://developers.google.com/profile/u/222\tAll Good\tYes\tUltimate Milestone\tYes\tVerified\tGemini Enterprise Agent Ready\t92\tBadge1\t12\tGame1
+Samuel Linggom\tsamuel@gmail.com\t62877777777\thttps://www.skills.google/public_profiles/c1c6841f-bf59-4df3-a489-e5e21e2ce0f8\tAll Good\thttps://me.developers.google.com/u/109477710490602107492\tAll Good\tYes\tMilestone 2\tNo\tSubmitted\tGemini Enterprise Agent Ready\t30\tBadge1\t8\tGame1
+Peserta Belum Mulai\tbelum@gmail.com\t62899999999\thttps://wrong-url.com\tWrong Google Skills URL\thttps://developers.google.com/profile/u/999\tAll Good\tNo\tNone\tNo\tNot yet submitted\t\t0\t\t0\t`
 
 export default function Fasil() {
   const [activeTab, setActiveTab] = useState('upload') // 'upload' | 'paste'
@@ -21,6 +19,7 @@ export default function Fasil() {
   const [search, setSearch] = useState('')
   const [milestoneFilter, setMilestoneFilter] = useState('ALL')
   const [statusFilter, setStatusFilter] = useState('ALL')
+  const [skillsMinFilter, setSkillsMinFilter] = useState('ALL') // 'ALL' | '5+' | '14+' | '28+' | '42+' | '56+'
   const [sortBy, setSortBy] = useState('points') // 'points' | 'skills' | 'games' | 'name'
   const [copiedMsg, setCopiedMsg] = useState(false)
   const [syncing, setSyncing] = useState(false)
@@ -91,6 +90,18 @@ export default function Fasil() {
       list = list.filter((p) => !p.isValidUrl)
     }
 
+    if (skillsMinFilter === '5+') {
+      list = list.filter((p) => p.skills >= 5)
+    } else if (skillsMinFilter === '14+') {
+      list = list.filter((p) => p.skills >= 14)
+    } else if (skillsMinFilter === '28+') {
+      list = list.filter((p) => p.skills >= 28)
+    } else if (skillsMinFilter === '42+') {
+      list = list.filter((p) => p.skills >= 42)
+    } else if (skillsMinFilter === '56+') {
+      list = list.filter((p) => p.skills >= 56)
+    }
+
     list.sort((a, b) => {
       if (sortBy === 'skills') return b.skills - a.skills || b.points - a.points
       if (sortBy === 'games') return b.games - a.games || b.points - a.points
@@ -99,7 +110,7 @@ export default function Fasil() {
     })
 
     return list
-  }, [data, search, milestoneFilter, statusFilter, sortBy])
+  }, [data, search, milestoneFilter, statusFilter, skillsMinFilter, sortBy])
 
   // Generator Pesan Rekap WhatsApp
   const generateWaBroadcast = () => {
@@ -122,6 +133,7 @@ export default function Fasil() {
 👥 *Ringkasan Peserta:*
 • Total Peserta: *${s.totalParticipants} orang*
 • Profil Valid: *${s.validUrlsCount} orang* ✅
+• Minimal 5 Skill Badges: *${s.atLeast5SkillsCount} orang* ⭐
 • Perlu Perbaikan URL: *${s.invalidUrlsCount} orang* ⚠️
 
 🏆 *Pencapaian Milestone:*
@@ -258,7 +270,7 @@ ${topList}
               <textarea
                 className="pz-textarea"
                 rows={8}
-                placeholder="Nama Peserta	Email Peserta	Nomor HP Peserta	URL Profil Google Skills	Status..."
+                placeholder="Nama Peserta	Email Peserta	Nomor HP Peserta	URL Profil Google Skills	Status Google Skills URL Profil	URL Profil Google Developer..."
                 value={pasteText}
                 onChange={(e) => setPasteText(e.target.value)}
               />
@@ -298,7 +310,12 @@ ${topList}
             <div className="kpi-card success">
               <div className="kpi-label">URL Profil Valid</div>
               <div className="kpi-val">{data.summary.validUrlsCount}</div>
-              <div className="kpi-sub">Status All Good ✅</div>
+              <div className="kpi-sub">Google Skills All Good ✅</div>
+            </div>
+            <div className="kpi-card star">
+              <div className="kpi-label">Minimal 5 Skill Badge</div>
+              <div className="kpi-val">{data.summary.atLeast5SkillsCount}</div>
+              <div className="kpi-sub">Peserta aktif (≥5 badge) ⭐</div>
             </div>
             <div className="kpi-card warning">
               <div className="kpi-label">Perlu Perbaikan URL</div>
@@ -400,6 +417,27 @@ ${topList}
               </div>
             </div>
 
+            {/* Filter Minimal Skill Badges (Permintaan Pengguna) */}
+            <div className="ff-chips">
+              <span className="ff-chip-label">Filter Skill Badges:</span>
+              {[
+                ['ALL', 'Semua'],
+                ['5+', '⭐ Minimal 5 Skill Badge'],
+                ['14+', 'Minimal 14 Skill (M1)'],
+                ['28+', 'Minimal 28 Skill (M2)'],
+                ['42+', 'Minimal 42 Skill (M3)'],
+                ['56+', 'Minimal 56 Skill (Ultimate)'],
+              ].map(([key, label]) => (
+                <button
+                  key={key}
+                  className={`chip-btn ${skillsMinFilter === key ? 'active special' : ''}`}
+                  onClick={() => setSkillsMinFilter(key)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+
             <div className="ff-chips">
               <span className="ff-chip-label">Milestone:</span>
               {[
@@ -442,6 +480,7 @@ ${topList}
           <div className="fasil-table-wrap">
             <div className="ft-header-info">
               Menampilkan <b>{filteredParticipants.length}</b> dari {data.participants.length} peserta
+              {skillsMinFilter === '5+' && ' (difilter: minimal 5 skill badge)'}
             </div>
 
             <table className="fasil-table">
@@ -465,20 +504,25 @@ ${topList}
                     </td>
                   </tr>
                 ) : (
-                  filteredParticipants.map((p, idx) => (
+                  filteredParticipants.map((p) => (
                     <tr key={p.id} className={!p.isValidUrl ? 'row-invalid' : ''}>
                       <td className="ft-rank">
                         {p.rank <= 3 ? <Medal i={p.rank - 1} className="pod-medal" /> : p.rank}
                       </td>
                       <td className="ft-name">
                         <span className="ft-name-text">{p.name}</span>
-                        {p.bonusMilestone && <span className="ai-bonus-badge">AI Agent +10</span>}
+                        <div style={{ display: 'flex', gap: '4px', flexWrap: 'wrap', marginTop: '2px' }}>
+                          {p.skills >= 5 && <span className="skill-5-badge">⭐ 5+ Skill</span>}
+                          {p.bonusMilestone && <span className="ai-bonus-badge">AI Agent +10</span>}
+                        </div>
                       </td>
                       <td>
                         <span className={`fasil-ms-tag ${p.milestoneKey}`}>{p.milestone}</span>
                       </td>
                       <td className="ft-num">{p.games}</td>
-                      <td className="ft-num">{p.skills}</td>
+                      <td className="ft-num">
+                        <b style={{ color: p.skills >= 5 ? 'var(--gold)' : 'inherit' }}>{p.skills}</b>
+                      </td>
                       <td className="ft-points">
                         <b>{p.points}</b>
                       </td>
@@ -493,7 +537,7 @@ ${topList}
                       </td>
                       <td style={{ textAlign: 'center' }}>
                         {p.profileUrl && (
-                          <Tip label="Buka Profil Public Google">
+                          <Tip label="Buka Profil Public Google Skills">
                             <a
                               className="viewlink"
                               href={p.profileUrl}
