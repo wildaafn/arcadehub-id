@@ -216,7 +216,12 @@ export default function Leaderboard() {
     <div>
       <div className="lb-note" id="lb-top">
         <span>Poin otomatis tersinkron dari tab <b>Poin Saya</b>. Masukkan link profil di sana, kamu langsung muncul di sini.</span>
-        {!profileUrl && <Link className="joinbtn lb-note-btn" to="/points">Masuk lewat Poin Saya</Link>}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <Link className="joinbtn lb-note-btn" style={{ background: 'rgba(91,139,255,.2)', borderColor: 'rgba(91,139,255,.4)', color: '#fff' }} to="/fasil">
+            📊 Upload CSV Fasilitator ↗
+          </Link>
+          {!profileUrl && <Link className="joinbtn lb-note-btn" to="/points">Masuk lewat Poin Saya</Link>}
+        </div>
       </div>
 
       {err && <div className="ferr">{err}</div>}

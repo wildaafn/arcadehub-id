@@ -107,6 +107,7 @@ export default function Footer() {
               <NavLink key={path} to={path} className="flink">{label}</NavLink>
             ))}
             <NavLink to="/guilds" className="flink">Guild</NavLink>
+            <NavLink to="/fasil" className="flink">Rekap Fasilitator</NavLink>
             <NavLink to="/roadmap" className="flink">Roadmap</NavLink>
           </div>
           <div className="fcol">

@@ -42,6 +42,7 @@ const Info = lazyRoute(() => import('./pages/Info.jsx'))
 const Contribute = lazyRoute(() => import('./pages/Contribute.jsx'))
 const Roadmap = lazyRoute(() => import('./pages/Roadmap.jsx'))
 const Guilds = lazyRoute(() => import('./pages/Guilds.jsx'))
+const Fasil = lazyRoute(() => import('./pages/Fasil.jsx'))
 
 // "/" -> /points, meneruskan ?guild= supaya guild ikut terpakai saat auto-join dari Poin Saya.
 function IndexRedirect() {
@@ -62,6 +63,7 @@ export default function App() {
         <Route path="contribute" element={<Contribute />} />
         <Route path="roadmap" element={<Roadmap />} />
         <Route path="guilds" element={<Guilds />} />
+        <Route path="fasil" element={<Fasil />} />
         <Route path="*" element={<Navigate to="/points" replace />} />
       </Route>
     </Routes>
