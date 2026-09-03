@@ -1,7 +1,6 @@
 import { useState, useMemo, useRef } from 'react'
 import { parseFacilitatorReport } from '../../lib/parseCsv.js'
 import Tip from '../Tip.jsx'
-import Medal from '../Medal.jsx'
 
 const DEMO_CSV = `Nama Peserta\tEmail Peserta\tNomor HP Peserta\tURL Profil Google Skills\tStatus Google Skills URL Profil\tURL Profil Google Developer\tStatus URL Profil Google Developer\tStatus Redeem Kode Akses\tMilestone yang diraih\tBonus Milestone yang diraih\tStatus Verifikasi AI Agent\tLencana Digital GEAR yang diraih\tJumlah Lencana Keahlian yang diselesaikan\tNama Lencana Keahlian yang diselesaikan\tJumlah Arcade Game yang diselesaikan\tNama Arcade Game yang diselesaikan
 Dimas Adjie Wijaya\tadjiedimas170@gmail.com\t6285166854209\thttps://www.skills.google/public_profiles/f588d6d0-e3e7-431f-8a35-8e834a524e8b\tAll Good\thttps://developers.google.com/profile/u/100815074843485258698\tAll Good\tYes\tNone\tNo\tNot yet submitted\tGemini Enterprise Agent Ready\t3\tBadge1\t0\t
@@ -22,8 +21,10 @@ export default function Fasil() {
   const [skillsMinFilter, setSkillsMinFilter] = useState('ALL') // 'ALL' | '5+' | '14+' | '28+' | '42+' | '56+'
   const [sortBy, setSortBy] = useState('points') // 'points' | 'skills' | 'games' | 'name'
   const [copiedMsg, setCopiedMsg] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
   const [syncing, setSyncing] = useState(false)
   const [syncProgress, setSyncProgress] = useState(null)
+  const [selectedShareUser, setSelectedShareUser] = useState(null)
   const fileInputRef = useRef(null)
 
   const handleProcessText = (text) => {
@@ -68,6 +69,7 @@ export default function Fasil() {
     setPasteText('')
     setSearch('')
     setSyncProgress(null)
+    setSelectedShareUser(null)
   }
 
   // Filter & sort
@@ -159,6 +161,11 @@ ${topList}
     })
   }
 
+  // Cetak / Unduh PDF
+  const handlePrintPdf = () => {
+    window.print()
+  }
+
   // Sinkronkan ke Leaderboard Komunitas via /api/join
   const handleSyncLeaderboard = async () => {
     if (!data?.participants) return
@@ -193,7 +200,6 @@ ${topList}
       } catch {
         failed++
       }
-      // Beri jeda kecil agar tidak memicu rate limit berlebihan
       await new Promise((r) => setTimeout(r, 200))
     }
 
@@ -201,19 +207,41 @@ ${topList}
     setSyncing(false)
   }
 
+  // Link progres personal untuk peserta
+  const getParticipantShareUrl = (profileUrl) => {
+    return `https://arcadehub-id.edgeone.dev/points?profile=${encodeURIComponent(profileUrl)}`
+  }
+
+  const getParticipantWaMsg = (p) => {
+    const shareUrl = getParticipantShareUrl(p.profileUrl)
+    return `Halo *${p.name}*! 👋
+
+Berikut rekap progres Google Cloud Arcade Fasilitator kamu:
+🏆 *Milestone*: ${p.milestone}
+⭐ *Skill Badges*: ${p.skills} badge
+🎮 *Arcade Games*: ${p.games} game
+📊 *Total Poin*: ${p.points} poin
+
+Pantau live detail badge & target milestone kamu langsung di tracker:
+🔗 ${shareUrl}`
+  }
+
   return (
     <div className="fasil-page">
-      {/* Header Halaman */}
+      {/* Header Halaman (di print layout menjadi Header Laporan) */}
       <div className="fasil-header">
-        <span className="fasil-badge">Fitur Khusus Fasilitator</span>
+        <span className="fasil-badge no-print">Fitur Khusus Fasilitator</span>
         <h1 className="fasil-title">Rekap Laporan CSV Fasilitator</h1>
         <p className="fasil-sub">
           Olah spreadsheet laporan harian Google Cloud Arcade secara instan untuk rekap progres peserta, analisis milestone guild, dan leaderboard.
         </p>
+        <div className="print-only-meta">
+          <span>Kode Guild: <b>GCAF26-ID-FCV-U99</b></span> · <span>Fasilitator: <b>WILDA ARIFFATUL FAISALNUR</b></span> · <span>Tanggal: {new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
+        </div>
       </div>
 
       {/* Jaminan Privasi & Tanpa Scraping */}
-      <div className="privacy-banner">
+      <div className="privacy-banner no-print">
         <div className="pb-icon">🔒</div>
         <div className="pb-content">
           <div className="pb-title">Jaminan Privasi &amp; Keamanan Data</div>
@@ -225,7 +253,7 @@ ${topList}
 
       {/* Bagian Input / Upload jika data belum dimuat */}
       {!data && (
-        <div className="fasil-upload-card">
+        <div className="fasil-upload-card no-print">
           <div className="fasil-tabs">
             <button
               className={`fasil-tab ${activeTab === 'upload' ? 'active' : ''}`}
@@ -357,9 +385,12 @@ ${topList}
           </div>
 
           {/* Toolbar Aksi Fasilitator */}
-          <div className="fasil-toolbar">
+          <div className="fasil-toolbar no-print">
             <button className="wa-broadcast-btn" onClick={copyWaBroadcast}>
               {copiedMsg ? '✅ Pesan WhatsApp Tersalin!' : '📋 Salin Rekap Broadcast WhatsApp'}
+            </button>
+            <button className="pdf-export-btn" onClick={handlePrintPdf} title="Cetak atau simpan laporan ke PDF">
+              📄 Cetak / Simpan PDF
             </button>
             <button
               className="sync-btn"
@@ -376,7 +407,7 @@ ${topList}
 
           {/* Status Progress Sinkronisasi */}
           {syncProgress && (
-            <div className="sync-status-box">
+            <div className="sync-status-box no-print">
               <div className="ss-title">
                 {syncProgress.done ? '✅ Sinkronisasi Selesai!' : '🔄 Sedang Mengirim Data ke Leaderboard...'}
               </div>
@@ -395,7 +426,7 @@ ${topList}
           )}
 
           {/* Filter & Pencarian Tabel */}
-          <div className="fasil-filter-card">
+          <div className="fasil-filter-card no-print">
             <div className="ff-row">
               <div className="ff-search">
                 <input
@@ -417,7 +448,7 @@ ${topList}
               </div>
             </div>
 
-            {/* Filter Minimal Skill Badges (Permintaan Pengguna) */}
+            {/* Filter Minimal Skill Badges */}
             <div className="ff-chips">
               <span className="ff-chip-label">Filter Skill Badges:</span>
               {[
@@ -486,14 +517,14 @@ ${topList}
             <table className="fasil-table">
               <thead>
                 <tr>
-                  <th style={{ width: '48px' }}>#</th>
+                  <th style={{ width: '64px', textAlign: 'center' }}>#</th>
                   <th>Nama Peserta</th>
                   <th>Milestone</th>
                   <th>Game</th>
                   <th>Skill</th>
                   <th>Poin</th>
                   <th>Status URL</th>
-                  <th style={{ textAlign: 'center' }}>Profil</th>
+                  <th style={{ textAlign: 'center' }} className="no-print">Aksi / Share</th>
                 </tr>
               </thead>
               <tbody>
@@ -506,8 +537,11 @@ ${topList}
                 ) : (
                   filteredParticipants.map((p) => (
                     <tr key={p.id} className={!p.isValidUrl ? 'row-invalid' : ''}>
-                      <td className="ft-rank">
-                        {p.rank <= 3 ? <Medal i={p.rank - 1} className="pod-medal" /> : p.rank}
+                      {/* Kolom Nomor / Rank - 100% Selalu Tampil Jelas */}
+                      <td className="ft-rank" style={{ textAlign: 'center' }}>
+                        <span className={`ft-rank-badge ${p.rank <= 3 ? `top-${p.rank}` : ''}`}>
+                          {p.rank === 1 ? '🥇 1' : p.rank === 2 ? '🥈 2' : p.rank === 3 ? '🥉 3' : p.rank}
+                        </span>
                       </td>
                       <td className="ft-name">
                         <span className="ft-name-text">{p.name}</span>
@@ -535,25 +569,134 @@ ${topList}
                           </span>
                         )}
                       </td>
-                      <td style={{ textAlign: 'center' }}>
-                        {p.profileUrl && (
-                          <Tip label="Buka Profil Public Google Skills">
-                            <a
-                              className="viewlink"
-                              href={p.profileUrl}
-                              target="_blank"
-                              rel="noreferrer"
+                      <td style={{ textAlign: 'center' }} className="no-print">
+                        <div style={{ display: 'inline-flex', gap: '6px', alignItems: 'center' }}>
+                          {p.profileUrl && (
+                            <button
+                              className="share-row-btn"
+                              onClick={() => setSelectedShareUser(p)}
+                              title={`Bagikan progres untuk ${p.name}`}
                             >
-                              ↗
-                            </a>
-                          </Tip>
-                        )}
+                              🔗 Share
+                            </button>
+                          )}
+                          {p.profileUrl && (
+                            <Tip label="Buka Profil Public Google Skills">
+                              <a
+                                className="viewlink"
+                                href={p.profileUrl}
+                                target="_blank"
+                                rel="noreferrer"
+                              >
+                                ↗
+                              </a>
+                            </Tip>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))
                 )}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Modal Dialog Share Progres Peserta */}
+      {selectedShareUser && (
+        <div className="modal-overlay" onClick={() => setSelectedShareUser(null)}>
+          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="mc-head">
+              <div className="mc-title">Bagikan Progres Peserta</div>
+              <button className="mc-close" onClick={() => setSelectedShareUser(null)}>✕</button>
+            </div>
+
+            <div className="mc-body">
+              {/* Kartu Progres Mini Peserta */}
+              <div className="share-preview-card">
+                <div className="spc-rank">Peringkat #{selectedShareUser.rank}</div>
+                <div className="spc-name">{selectedShareUser.name}</div>
+                <div className="spc-milestone">
+                  <span className={`fasil-ms-tag ${selectedShareUser.milestoneKey}`}>
+                    {selectedShareUser.milestone}
+                  </span>
+                </div>
+                <div className="spc-stats">
+                  <div className="spc-stat">
+                    <span className="spc-stat-label">Total Poin</span>
+                    <span className="spc-stat-val gold">{selectedShareUser.points}</span>
+                  </div>
+                  <div className="spc-stat">
+                    <span className="spc-stat-label">Skill Badges</span>
+                    <span className="spc-stat-val">{selectedShareUser.skills}</span>
+                  </div>
+                  <div className="spc-stat">
+                    <span className="spc-stat-label">Arcade Games</span>
+                    <span className="spc-stat-val">{selectedShareUser.games}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Link Share Progres Peserta */}
+              <div className="mc-section">
+                <label className="mc-label">🔗 Link Langsung Tracker Peserta:</label>
+                <div className="mc-link-box">
+                  <input
+                    type="text"
+                    readOnly
+                    value={getParticipantShareUrl(selectedShareUser.profileUrl)}
+                    className="mc-link-input"
+                  />
+                  <button
+                    className="mc-copy-btn"
+                    onClick={() => {
+                      navigator.clipboard.writeText(getParticipantShareUrl(selectedShareUser.profileUrl))
+                      setCopiedLink(true)
+                      setTimeout(() => setCopiedLink(false), 2000)
+                    }}
+                  >
+                    {copiedLink ? '✅ Tersalin' : 'Salin Link'}
+                  </button>
+                </div>
+                <p className="mc-hint">
+                  Ketika peserta membuka link ini, tracker otomatis menghitung dan menampilkan progres live badge miliknya!
+                </p>
+              </div>
+
+              {/* Pesan Broadcast WhatsApp Personal */}
+              <div className="mc-section">
+                <label className="mc-label">💬 Pesan WhatsApp Siap Kirim:</label>
+                <textarea
+                  readOnly
+                  rows={6}
+                  className="mc-textarea"
+                  value={getParticipantWaMsg(selectedShareUser)}
+                />
+                <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                  <button
+                    className="wa-broadcast-btn"
+                    style={{ padding: '8px 14px', fontSize: '12.5px' }}
+                    onClick={() => {
+                      navigator.clipboard.writeText(getParticipantWaMsg(selectedShareUser))
+                      setCopiedMsg(true)
+                      setTimeout(() => setCopiedMsg(false), 2000)
+                    }}
+                  >
+                    {copiedMsg ? '✅ Pesan WhatsApp Tersalin!' : '📋 Salin Pesan WhatsApp'}
+                  </button>
+                  <a
+                    className="sync-btn"
+                    style={{ padding: '8px 14px', fontSize: '12.5px', textDecoration: 'none' }}
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(getParticipantWaMsg(selectedShareUser))}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Kirim via WhatsApp ↗
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}

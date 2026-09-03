@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { m } from 'framer-motion'
 import { MS, TIERS, tierForPoints } from '../points.js'
 import { useCountUp } from '../useCountUp.js'
@@ -46,11 +46,22 @@ function GuildRow() {
 
 // Poin Saya: otomatis dari public profile Cloud Skills Boost (bukan input manual)
 function MyPoints() {
+  const [searchParams] = useSearchParams()
   const { profileUrl, score, guild, loading, err, fetchScore, clear, leave, canLeave } = useMyProfile()
   const [input, setInput] = useState(profileUrl || '')
   const [guildInput, setGuildInput] = useState(guild || '')
   const [showBadges, setShowBadges] = useState(false)
   const [showShare, setShowShare] = useState(false)
+
+  // Auto-fetch if ?profile=... query parameter is present in URL (e.g. shared from facilitator report)
+  useEffect(() => {
+    const urlParam = searchParams.get('profile') || searchParams.get('url')
+    if (urlParam && urlParam.trim()) {
+      const p = urlParam.trim()
+      setInput(p)
+      fetchScore(p, guildInput).catch(() => {})
+    }
+  }, [searchParams])
   // Klaim bonus AI Agent dipegang di sini supaya Rincian Poin ikut berubah saat checkbox
   // di kartu Bonus Milestone dicentang. Sumber kebenarannya tetap localStorage di kartu itu.
   const [bonusDone, setBonusDone] = useState(readBonusClaim)
