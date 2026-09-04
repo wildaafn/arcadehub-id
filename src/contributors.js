@@ -33,4 +33,11 @@ export const CONTRIBUTORS = [
     bio: 'Mahasiswa FMIPA Universitas Negeri Makassar & Peserta Google Cloud Arcade 2026.',
     tags: ['Programming', 'Teacher'],
   },
+  {
+    name: 'Wilda Ariffatul Faisalnur',
+    github: 'wildaafn',
+    web: '',
+    bio: 'Fasilitator Google Cloud Arcade 2026 (Guild GCAF26-ID-FCV-U99). Menambahkan fitur upload CSV laporan fasilitator, rekap leaderboard peserta, dan ekspor PDF untuk komunitas.',
+    tags: ['Feature', 'Facilitator'],
+  },
 ]
