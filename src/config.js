@@ -4,19 +4,18 @@
 // `links` opsional: URL ditulis lengkap di sini (bukan ambil dari CONFIG) karena
 // tiap pengumuman bisa menunjuk dokumen yang berbeda.
 export const ANNOUNCEMENT = {
-  id: '2026-08-31-h14-week8',
-  date: '31 Agustus 2026',
-  title: '👾 WEEK 8 — H-14! Tinggal 2 Minggu Lagi!',
+  id: '2026-09-15-progres-diperpanjang-29-september',
+  date: '15 September 2026',
+  title: '📢 Pendaftaran Fasilitator Ditutup — Progres Dihitung Hingga 29 September 2026!',
   body: [
-    'Program Google Cloud Arcade Fasilitator 2026 berakhir 14 September 2026. Artinya tinggal 2 minggu lagi untuk menyelesaikan lab, ngumpulin badge, dan kunci poinmu!',
-    'Week 8 ini (31 Agustus – 4 September) adalah momen terakhir buat push sebelum closing. Kalau deket milestone, buruan selipin sisa badge-nya. Bonus milestone +10 poin juga masih bisa dikejar.',
-    'Jangan lupa: Arcade Game kuotanya terbatas & game bisa kedaluwarsa tiap bulan. Mainkan dulu kalau belum. Slot hadiah bersifat waterfall & first-come — makin cepat kunci poin, makin aman.',
-    'Butuh bantuan? Office Hour tiap Kamis 19.00-20.00 WIB, atau tanya langsung di grup WhatsApp.',
+    'Pendaftaran program Google Cloud Arcade Fasilitator 2026 telah resmi ditutup per 14 September 2026.',
+    'Kabar baik: Progres player maupun fasilitator masih akan terhitung hingga 29 September 2026 pukul 23.59 WIB.',
+    'Bagi peserta yang sudah terdaftar, maksimalkan sisa waktu ini untuk menyelesaikan lab, mengumpulkan badge, dan mengunci tier serta milestone hadiahmu!',
   ],
   links: [
     { label: 'Cek poin saya', href: '/points' },
     { label: 'Lihat katalog badge', href: '/catalog' },
-    { label: 'Weekly Challenge Player', href: 'https://dicoding.id/Arcade26-WCPlayer' },
+    { label: 'Leaderboard', href: '/leaderboard' },
   ],
   signature: 'W',
 }
@@ -28,7 +27,9 @@ export const CONFIG = {
   registerUrl: 'https://bit.ly/GoogleSkills26',
   whatsappUrl: 'https://chat.whatsapp.com/Cbbe9EzpMfSBDwBcwe0a70?mode=gi_t',
   regOpen: '13 Juli 2026, 09.00 WIB',
-  regClose: '14 September 2026, 23.59 WIB',
+  regClose: '14 September 2026, 23.59 WIB (Ditutup)',
+  progressClose: '29 September 2026, 23.59 WIB',
+  isRegClosed: true,
   arcadeUrl: 'https://go.cloudskillsboost.google/arcade',
   // Weekly challenge peserta (Dicoding). Short link sengaja dipakai apa adanya:
   // tujuannya bisa berganti tanpa perlu ubah kode.

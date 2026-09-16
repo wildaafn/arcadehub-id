@@ -78,8 +78,32 @@ export default function Info() {
       )}
 
       <div className="infocard hero">
-        <div className="ic-t">Daftar Program</div>
-        <p className="ic-p">Belum daftar? Daftar melalui tautan fasilitator di bawah ini.</p>
+        <div className="ic-t">Status Pendaftaran & Progres</div>
+        <div style={{
+          background: 'rgba(234, 67, 53, 0.12)',
+          border: '1px solid rgba(234, 67, 53, 0.35)',
+          borderRadius: '10px',
+          padding: '10px 14px',
+          margin: '10px 0 12px',
+          fontSize: '13.5px',
+          lineHeight: '1.5',
+          color: '#ffd0cb'
+        }}>
+          <b>Pendaftaran fasilitator resmi ditutup</b> per 14 September 2026.
+        </div>
+        <div style={{
+          background: 'rgba(52, 201, 95, 0.12)',
+          border: '1.5px dashed rgba(52, 201, 95, 0.45)',
+          borderRadius: '10px',
+          padding: '12px 14px',
+          margin: '0 0 16px',
+          fontSize: '14px',
+          lineHeight: '1.5',
+          color: '#d4f7e2',
+          textAlign: 'center'
+        }}>
+          Progres player maupun fasilitator masih akan terhitung hingga <b>29 September 2026 pukul 23.59 WIB</b>.
+        </div>
         <div className="ic-lab">Fasilitator</div>
         <p className="ic-p"><b>{CONFIG.facilitatorName}</b></p>
         {CONFIG.referralCode && (
@@ -88,10 +112,17 @@ export default function Info() {
             <CopyCode />
           </>
         )}
-        <a className="bigcta" href={CONFIG.registerUrl} target="_blank" rel="noreferrer">Daftar Sekarang ↗</a>
+        <a className="bigcta" style={{
+          background: 'rgba(255, 255, 255, 0.08)',
+          color: 'var(--muted)',
+          boxShadow: 'none',
+          border: '1px solid var(--line)',
+          pointerEvents: 'none',
+          cursor: 'default'
+        }} href={CONFIG.registerUrl} aria-disabled="true">Pendaftaran Ditutup</a>
         <div className="ic-dates">
-          <div><span>Buka</span><b>{CONFIG.regOpen}</b></div>
-          <div><span>Tutup</span><b>{CONFIG.regClose}</b></div>
+          <div><span>Pendaftaran</span><b style={{ color: '#ff8585' }}>{CONFIG.regClose}</b></div>
+          <div><span>Batas Progres</span><b style={{ color: 'var(--green)' }}>{CONFIG.progressClose}</b></div>
         </div>
       </div>
 
