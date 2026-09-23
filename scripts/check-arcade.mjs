@@ -93,9 +93,13 @@ for (const f of featured) say(`${catIds.has(f.id) ? 'v' : '!'} ${f.id} ${f.name}
 
 // ---- 2. status + judul semua badge katalog
 section(`STATUS ${SKILL_CATALOG.length} BADGE KATALOG (butuh sekitar 1-2 menit)`)
-const infos = await pool(SKILL_CATALOG, (s) => courseInfo(s.id))
-const dead = [], renamed = [], deprecated = []
+const infos = await pool(SKILL_CATALOG.filter((s) => !s.skipHttpCheck), (s) => courseInfo(s.id))
+const dead = [], renamed = [], deprecated = [], skipped = []
 for (const s of SKILL_CATALOG) {
+  if (s.skipHttpCheck) {
+    skipped.push(s)
+    continue
+  }
   const info = infos.find((i) => i.id === s.id)
   if (info.status !== 200) { dead.push({ ...s, status: info.status }); continue }
   if (/deprecated/i.test(info.title)) deprecated.push({ ...s, live: info.title })
@@ -104,12 +108,17 @@ for (const s of SKILL_CATALOG) {
   const live = info.title.replace(/^\s*\[DEPRECATED\]\s*/i, '')
   if (norm(live) !== norm(s.name)) renamed.push({ ...s, live: info.title })
 }
-say(`hidup: ${SKILL_CATALOG.length - dead.length} | mati: ${dead.length} | ganti nama: ${renamed.length} | deprecated: ${deprecated.length}`)
+say(`hidup: ${SKILL_CATALOG.length - dead.length} | mati: ${dead.length} | dilewati-CI: ${skipped.length} | ganti nama: ${renamed.length} | deprecated: ${deprecated.length}`)
 
 if (dead.length) {
   section('BADGE MATI (halaman course tidak bisa dibuka)')
   dead.forEach((d) => say(`x ${d.id} HTTP ${d.status}  ${d.name}`))
   say('-> pertimbangkan hapus dari SKILL_CATALOG supaya tidak disarankan ke peserta.')
+}
+if (skipped.length) {
+  section('BADGE DILEWATI (skipHttpCheck: Google 403 dari IP datacenter CI, bukan badge mati)')
+  skipped.forEach((s) => say(`- ${s.id} ${s.name}`))
+  say('-> cek manual di browser; kalau benar mati, hapus skipHttpCheck dan tambah ke dead.')
 }
 if (renamed.length) {
   section('GANTI NAMA (course id sama, judul beda)')
